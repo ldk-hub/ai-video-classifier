@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: ai-video-classifier
+  datasource:
+    url: jdbc:postgresql://${PG_HOST:localhost}:${PG_PORT:5432}/${PG_DB:videodb}
+    username: ${PG_USER:postgres}
+    password: ${PG_PASS:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
+
+cors:
+  allowed-origins: "http://localhost:3000"

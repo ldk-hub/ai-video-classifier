@@ -1,0 +1,6 @@
+# Root gitignore
+.idea/
+.vscode/
+.DS_Store
+
+# We let frontend/.gitignore and backend/.gitignore handle their specific folders
