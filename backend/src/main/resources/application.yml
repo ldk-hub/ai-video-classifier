@@ -20,3 +20,12 @@ server:
 
 cors:
   allowed-origins: "http://localhost:3000"
+
+app:
+  storage:
+    path: "./videos"
+
+# Gemini API Integration
+gemini:
+  api:
+    key: "" # Insert your Google Gemini API Key here

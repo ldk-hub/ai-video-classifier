@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface VideoFileRepository extends JpaRepository<VideoFile, Long> {
+    boolean existsByOriginalName(String originalName);
     List<VideoFile> findByIsLowQualityTrue();
     List<VideoFile> findByStatusOrderByCreatedAtDesc(VideoStatus status);
 
