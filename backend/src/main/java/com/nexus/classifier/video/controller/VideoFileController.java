@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/v1/videos")
@@ -18,13 +19,33 @@ public class VideoFileController {
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<VideoFile>> uploadVideo(@RequestParam("filename") String filename) {
-        // Mocking file upload and just registering the metadata for now
         VideoFile registeredVideo = videoFileService.registerVideo(filename);
+        if (registeredVideo == null) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, "File already exists or invalid"));
+        }
         
-        // Trigger async processing (mocked synchronously for demonstration)
+        // Trigger processing
         VideoFile processedVideo = videoFileService.processVideo(registeredVideo.getId());
         
         return ResponseEntity.ok(ApiResponse.success(processedVideo));
+    }
+
+    @PostMapping("/scan")
+    public ResponseEntity<ApiResponse<List<VideoFile>>> scanLocalDisk() {
+        List<VideoFile> scannedFiles = videoFileService.scanDirectoryAndRegister();
+        
+        // Asynchronously process the newly found files
+        for (VideoFile file : scannedFiles) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    videoFileService.processVideo(file.getId());
+                } catch (Exception e) {
+                    // Ignore, service layer already handles failure state
+                }
+            });
+        }
+        
+        return ResponseEntity.ok(ApiResponse.success(scannedFiles));
     }
 
     @GetMapping
